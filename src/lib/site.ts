@@ -277,9 +277,12 @@ export const hero = {
  * nothing free to hand out.
  */
 export const heroFilms = [
-  // Local H.264/fast-start rendition of the 46.3 MB HEVC Shopify original.
-  // At 6.3 MB it starts reliably across browsers and costs far less to decode.
-  "/media/hero-main.mp4",
+  // H.264/fast-start rendition of the 46.3 MB HEVC original (6.3 MB): it
+  // starts reliably across browsers and costs far less to decode. It lived in
+  // public/media until 2026-11-04, which put every play on Vercel's metered
+  // bandwidth; this is the same file uploaded to Shopify. Do not swap it back
+  // for the HEVC original.
+  "https://cdn.shopify.com/videos/c/o/v/e1c708f50e1b4e5badb08fb0d360e217.mp4",
   "https://cdn.shopify.com/videos/c/o/v/3329bb6694284f05be3d3ff8a0bb6f22.mp4",
   "https://cdn.shopify.com/videos/c/o/v/65fa358ea2ec488f9c62e7f86d758f3c.mp4",
   "https://cdn.shopify.com/videos/c/o/v/e78b76a026054863975d667b63071a21.mp4",

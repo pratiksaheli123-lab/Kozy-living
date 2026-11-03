@@ -1601,9 +1601,10 @@ What changed, and the rules that keep it fixed:
   `**.myshopify.com`, i.e. a free resizer on our metered quota. WebP only,
   31-day cache, no 3840 width (a duplicate of the 2048 cap).
 - **`public/` files get a week of browser cache** (`headers()` in
-  `next.config.js`). Biggest: `public/media/hero-main.mp4` (6.3 MB), the
-  first hero film. Every other film is on Shopify's CDN; this one should
-  be too (upload in Admin → Content → Files, swap the URL in `heroFilms`).
+  `next.config.js`). Every hero film is on Shopify's CDN, including the
+  first (`heroFilms` in `site.ts`; it was `public/media/hero-main.mp4`,
+  6.3 MB on Vercel's bandwidth, until 2026-11-04). Do not put video in
+  `public/`. Only the posters (`public/media/*-poster.jpg`) stay local.
 - **`/api/search` is CDN-cached** (`s-maxage=300`) and caps `q` at 80
   characters. Results are the same for everyone.
 - **Dynamic routes check `isPossibleHandle()`** (`lib/shopify/handle.ts`)
