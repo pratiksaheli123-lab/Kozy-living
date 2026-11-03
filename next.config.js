@@ -38,12 +38,20 @@ module.exports = {
   },
   async headers() {
     // Files in `public/` are served by Vercel's CDN with `max-age=0`, so a
-    // returning browser re-asks for every icon and the 6 MB hero film on
-    // every visit. A week is long enough to stop that, short enough that a
-    // replaced file shows up. Hashed `/_next/static` assets already carry
-    // their own immutable headers.
+    // returning browser re-asks for every icon and poster on every visit. A
+    // week is long enough to stop that, short enough that a replaced file
+    // shows up. Hashed `/_next/static` assets already carry their own
+    // immutable headers.
+    //
+    // The three root icons are fetched by browsers, iOS and crawlers by
+    // fixed path whatever the <head> says. Without the files those requests
+    // fell through to the `/[page]` catch-all and rendered a full 404 page in
+    // a function, once per request.
     const week = "public, max-age=604800, stale-while-revalidate=86400";
-    return ["/media/:path*", "/icons/:path*", "/kozy/:path*", "/logo/:path*", "/newsletter/:path*", "/favicon/:path*", "/font/:path*"].map(
+    return [
+      "/media/:path*", "/icons/:path*", "/kozy/:path*", "/logo/:path*", "/newsletter/:path*", "/favicon/:path*", "/font/:path*",
+      "/favicon.ico", "/apple-touch-icon.png", "/apple-touch-icon-precomposed.png",
+    ].map(
       (source) => ({ source, headers: [{ key: "Cache-Control", value: week }] }),
     );
   },

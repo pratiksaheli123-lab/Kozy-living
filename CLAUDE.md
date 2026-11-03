@@ -521,7 +521,12 @@ icons are now ≤256px, `gi-tag.png` is 189x320 (was 2528x4288, 7.8 MB), and the
 JSON-LD/manifest/postcard use `public/logo/kozy-logo-web.png` (720x405,
 56 KB). The favicon is `public/favicon/` - the puffed K from Shopify's
 `IMG_6217.png`, trimmed to the letter and squared (32 and 192 transparent;
-the 180 touch icon on cream, since iOS paints transparency black). The 3.2 MB masters in `public/logo/` are untouched; do not point
+the 180 touch icon on cream, since iOS paints transparency black).
+`public/favicon.ico` (16/32/48, from the 192) and the two root
+`apple-touch-icon*.png` copies exist only because browsers, iOS and
+crawlers request those fixed paths whatever the `<head>` says; without them
+each request was a 404 rendered by the `/[page]` function (§17). Regenerate
+them when the mark changes. The 3.2 MB masters in `public/logo/` are untouched; do not point
 anything that renders on every page at them.
 
 **The header logo is Shopify's file, not that one.** `LogoSquare` (header and
