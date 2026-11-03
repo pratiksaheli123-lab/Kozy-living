@@ -1544,6 +1544,10 @@ rules are `lib/shop/size-chart.ts`, the drawer
 
 ## 17. Caching and crawl budget — why the Hobby deployment was paused
 
+The full incident record - including the **Vercel dashboard settings**
+(region, domains, firewall rules) that live outside the repo, the measured
+results and what is still open - is `docs/vercel-hosting.md`.
+
 Launched 2026-11-01; paused by Vercel on 2026-11-02 for **Fast Origin
 Transfer** (function → CDN bytes): ~40 GB against Hobby's 10 GB/month fair
 use, 99.6% in `iad1`. That region is where the **functions** run (Vercel's
