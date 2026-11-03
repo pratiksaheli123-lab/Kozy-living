@@ -14,6 +14,7 @@ import LoadingScreen from "@/components/motion/loading-screen";
 import RouteProgress from "@/components/motion/route-progress";
 import NewsletterPopup from "@/components/newsletter/newsletter-popup";
 import { Suspense } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/lib/site";
 import { SITE_URL } from "@/lib/site-url";
 
@@ -208,6 +209,10 @@ export default function RootLayout({
             <NewsletterPopup />
           </CartProvider>
         </SmoothScrollProvider>
+        {/* Client-only beacon to /_vercel/insights; it reads the route on
+            the client (inside its own Suspense), so it does not make any
+            static route dynamic - see §17 in CLAUDE.md. */}
+        <Analytics />
       </body>
     </html>
   );

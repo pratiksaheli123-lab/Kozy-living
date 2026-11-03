@@ -1609,6 +1609,12 @@ What changed, and the rules that keep it fixed:
 - **Dynamic routes check `isPossibleHandle()`** (`lib/shopify/handle.ts`)
   before asking Shopify. `/[page]` is a root catch-all, so every scanner
   probe (`/wp-login.php`, `/.env`) lands there.
+- **Vercel Web Analytics** (`<Analytics />` from `@vercel/analytics/next`,
+  last in `<body>` in `layout.tsx`, added 2026-11-04). It is a client beacon
+  and wraps its own `useSearchParams` in Suspense, so the route table above
+  is unchanged (verified with `next build`). It only reports once Analytics
+  is enabled for the project in the Vercel dashboard. Hobby includes a
+  monthly event quota; custom `track()` events count against it.
 - **Preview deployments serve `Disallow: /`** (`VERCEL_ENV` in `robots.ts`).
 - **The viewport-cookie bootstrap cannot loop.** It reloaded whenever the
   `kozy_is_mobile` cookie disagreed with the window, so a client that cannot
