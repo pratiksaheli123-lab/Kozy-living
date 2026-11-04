@@ -189,7 +189,7 @@ export const founderReel = [
  */
 
 /** The quiet line above the header. */
-export const announcement = "Reimagined Indian kraft to give you moments of rest";
+export const announcement = "Reimagined Indian kraft for everyday";
 
 /* ------------------------------------------------------------------ homepage
    The sections below map one-to-one onto the homepage layout, in page order.
