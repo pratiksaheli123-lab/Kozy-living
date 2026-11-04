@@ -49,7 +49,7 @@ Read the VOICE note at the top of `src/lib/site.ts` before writing any copy.
   - Owner-requested exceptions (2026-10-29), each confined to its line: the
     hero flag reads "Handkrafted by Indian kraft klusters" (`flag` /
     `flagMark` in `site.ts`), and the tagline / announcement read
-    "Reimagined Indian kraft to give you moments of rest". Those two lines
+    "Reimagined Indian kraft for everyday". Those two lines
     are the only places "kraft" and "klusters" take the K. Do not spread
     them to other uses of "handcrafted", "craft" or "clusters".
 - **The K brand words** (owner's call, 2026-10-13). In our own copy these
