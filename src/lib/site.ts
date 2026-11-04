@@ -240,7 +240,9 @@ export const hero = {
     },
     {
       tag: "#KRAFTEDKOMPANIONS",
-      handle: "kozy-lounge",
+      // Was `kozy-lounge`, which the store has never had: the tile fell back
+      // to bestseller photographs and a bare /search link.
+      handle: "krafted-by-kozy",
       images: [
         "https://cdn.shopify.com/s/files/1/0700/6476/7047/files/900E9CCD-5302-4863-A642-251A2207515C.jpg?v=1788636354",
         "https://cdn.shopify.com/s/files/1/0700/6476/7047/files/85aeb9ef-fd0d-4cf2-a72f-af881a17b4fb.jpg?v=1788636352",
@@ -532,7 +534,10 @@ export const aboutStory = {
       lede: { lead: "The Kozy", accent: "Grounded Korner" },
       body: "Sitting on the floor can help you feel grounded and reconnect with yourself. Make room for a simple everyday ritual that brings you back to the present, with komfort rooted in tradition.",
       cta: "Shop Kompanions",
-      collection: "kozy-lounge",
+      // No floor-lounging collection exists yet (`kozy-lounge` never did), so
+      // the card shows its own still and links to `href`. Name a real handle
+      // here once the merchant creates one.
+      collection: null,
       href: "/search",
       alt: "A floor lounge layered with biscuit pillows and a linen blend throw.",
       images: [

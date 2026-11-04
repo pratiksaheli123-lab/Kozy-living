@@ -799,8 +799,12 @@ function RestTicker() {
 /* ------------------------------------------------------------ commerce */
 
 async function CuratedEdits() {
+  // Newest first across the whole catalogue. This used to ask for a `blend`
+  // collection the store has never had, fail, and land here anyway - one
+  // wasted Shopify round trip and a "No collection found" log line on every
+  // homepage regeneration.
   const products = (
-    await productsFrom("blend", { sortKey: "CREATED_AT", reverse: true })
+    await getProducts({ sortKey: "CREATED_AT", reverse: true }).catch(() => [])
   ).slice(0, 3);
 
   if (!products.length) return null;

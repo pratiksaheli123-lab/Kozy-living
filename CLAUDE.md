@@ -436,10 +436,15 @@ downstream as badges and labels, and they were missed on the first pass.
   fails silently: the guard below turns the link into `/search` and a
   lookbook plate with no stills renders its blank oat placeholder (that is
   how "Krafted by Kozy" and "Dabu Pillows" went photo-less on the homepage).
-- Collections `kozy-lounge` and `blend` do not exist. Code that references
-  them already falls back — see below. (The homepage Bestsellers rail used to
-  ask for a non-existent `popular`; it now reads the merchant's `bestsellers`
-  collection, in its Admin order.)
+- Collections `kozy-lounge` and `blend` do not exist, and nothing asks for
+  them any more (2026-11-04): every homepage regeneration was logging three
+  "No collection found" lines. The hero's #KRAFTEDKOMPANIONS tile reads
+  `krafted-by-kozy`; story card 04 has `collection: null` (its still and
+  `/search`) until a floor-lounging collection exists; "New Kompanions" reads
+  the whole catalogue newest-first directly. (The homepage Bestsellers rail
+  used to ask for a non-existent `popular`; it now reads the merchant's
+  `bestsellers` collection, in its Admin order.) A "No collection found" line
+  in the Vercel logs means a hard-coded handle has gone stale.
 
 ### Guard the handle, always
 
