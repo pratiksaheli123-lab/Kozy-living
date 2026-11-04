@@ -9,8 +9,9 @@ The code-side rules are also in `CLAUDE.md` §17. Read this document for the
 **dashboard settings** as well: they live in Vercel, not in the repo, and
 nothing in git will tell you if one is switched off.
 
-**Status (2026-11-04):** redeployed on a new Vercel account, every usage
-metric under 1% of its Hobby limit. Waiting on one 24-48h check (§6).
+**Status (2026-11-04, 15:37 IST):** redeployed on a new Vercel account. The
+bots are stopped, but at the current rate ISR Writes would pass the monthly
+limit: see *The remaining problem* in §5.
 
 ---
 
@@ -94,15 +95,45 @@ Protection, not a fault. Test pages in a real browser.
 
 - **Function invocations:** 152 in 12h. `/search` leads (87 runs, ~115 ms CPU
   each). It is dynamic by design: shop state lives in the URL. `/` runs only
-  for ISR refreshes, at most once a minute while it is being visited.
+  for ISR refreshes (at most once a minute then; every 15 minutes since the fix below).
 - **Firewall:** 1.5-1.7K requests a day denied, almost all **Amazonbot**
   walking `/search` with query strings (~75 every 5 minutes), plus GPTBot.
   **Total transfer to them: 0 B.** Without the firewall that was ~0.9 GB of
   Fast Origin Transfer a day from Amazonbot alone: the November pattern.
-- **Origin transfer by region:** about a third still showed in Washington
-  (`iad1`) on the first day, from the first deployment, built before the
-  region was switched. Delete or let retention remove pre-switch
-  deployments.
+- **Origin transfer by region:** 18% shows in Washington (`iad1`) in bursts
+  that line up with deployments (03:30, 08:30, 14:30-15:30 IST). Active CPU
+  in `iad1` is only 2s, all before the region switch, so functions are not
+  running there. Most likely deployment traffic rather than visitors; this
+  is inferred from the timing, not confirmed.
+
+### The remaining problem: a steady homepage rebuild
+
+Figures from about 14 hours (to 15:37 IST), projected to 720 hours from the
+hours with no deployment:
+
+| Metric | So far | Per hour | Per month | Hobby limit |
+| --- | --- | --- | --- | --- |
+| ISR Writes | 7.6K | ~500 | **~360K** | 200K |
+| Fast Origin Transfer | 140 MB | ~7.5 MB | ~5.4 GB | 10 GB |
+| Active CPU | 2m 41s | ~10s | ~2h | 4h |
+
+All three run flat through the night, so they do not follow shoppers. The
+logs show the homepage rebuilding every 2m 47-48s, a machine-regular interval.
+Nothing in the site's code runs on that timer, so something outside it is
+requesting `/`, and each request after the 60s TTL triggered a rebuild. What
+that requester is has not been confirmed. The suspects are two AWS addresses
+in California, `13.57.148.235` and `54.183.149.156`, whose traffic is regular.
+
+**Fixed in code:** the production TTL behind every Shopify fetch and the ISR
+`revalidate` values went from 60s to 900s. A request every 168s now rebuilds
+the homepage about every 17 minutes instead of every 3, roughly 6x fewer. The
+projection is ~60K ISR writes, ~1 GB Fast Origin Transfer and ~20 minutes of
+Active CPU a month, to be confirmed against Usage after a deploy. Setting
+`SHOPIFY_CACHE_SECONDS` in Vercel overrides the default.
+
+Still not cached: `/search` and `/search/[collection]`, which read
+`searchParams` and render on every request. That was Googlebot's and Bingbot's
+main cost in the same data (338 and 103 requests in 12h, 40.8% and 8% cached).
 
 ## 6. To check
 
@@ -145,10 +176,9 @@ In order of importance.
    primary domain) runs the "Forward to headless" theme, which redirects
    every shopper to `kozyliving.in`. If Vercel pauses, shoppers land on a dead
    site.
-4. **If traffic grows:** the homepage refreshes every 60s (the Shopify cache
-   TTL). Raising it to ~5 minutes cuts `/` invocations ~5×. Only do it with
-   the Shopify webhooks to `/api/revalidate` in place, or Admin edits take
-   that long to show.
+4. **The 15-minute cache TTL (§5) delays Admin edits** by up to that long,
+   unless the Shopify webhooks to `/api/revalidate` are registered. Check them
+   in Shopify Admin → Settings → Notifications → Webhooks.
 
 Smaller, from `CLAUDE.md` §10: two Shopify originals too large for Shopify to
 resize (`Simple_Aesthetic_…_-_14/-_15.png`, `IMG_1283.png`), and the PWA

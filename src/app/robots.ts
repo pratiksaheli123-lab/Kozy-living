@@ -31,6 +31,7 @@ const BLOCKED_BOTS = [
   "Amazonbot",
   "Applebot-Extended",
   "Google-Extended",
+  "GoogleOther",
   "cohere-ai",
   "Diffbot",
   "omgili",

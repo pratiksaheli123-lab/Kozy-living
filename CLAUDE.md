@@ -218,11 +218,11 @@ hard-coded fallback list silently replaced the real menu for months and shipped
 links to collection handles the store never had — do not reintroduce one.
 
 The menu is on the **same cache TTL as every other Shopify call** (none in dev,
-60s in production) and memoised per request with React `cache()`. It used to
+15 minutes in production - §17) and memoised per request with React `cache()`. It used to
 be `no-store`, and because the header awaits it outside any Suspense boundary,
 every page on every request waited on a live Shopify round trip before sending
 its first byte — warm TTFB measured 0.5–0.7s, now 0.01–0.05s. A menu edit in
-Admin now takes up to a minute to reach production. Do not put it back on
+Admin now takes up to 15 minutes to reach production. Do not put it back on
 `no-store`; if instant menu edits ever matter, revalidate a tag instead.
 
 ### The footer — `kozy-living-footer`, same rule
@@ -1575,6 +1575,15 @@ The cause, measured on a local production build:
 
 What changed, and the rules that keep it fixed:
 
+- **The Shopify TTL is 15 minutes in production** (`SHOPIFY_CACHE_SECONDS`,
+  default raised from 60 on 2026-11-04), and it also sets how often an ISR page
+  may rebuild. At 60s, one automated client requesting `/` every 168s rebuilt
+  the homepage around the clock: ~500 ISR write units an hour, ~360K a month
+  against Hobby's 200K, with 7 real visitors a day. `product/[handle]`,
+  `[page]` and `policies/[policy]` repeat the number as a literal
+  `export const revalidate = 900` (the lower of the two wins), so move them
+  together. Admin edits take up to 15 minutes unless the webhooks to
+  `/api/revalidate` are registered; checkout always charges Shopify's price.
 - **Nothing rendered on every page may read `cookies()` / `headers()` or make
   a `no-store` fetch** (root layout, Navbar, Footer, NewsletterBand). The
   cart is read by the browser: `CartProvider` calls the `readCart()` server

@@ -178,16 +178,23 @@ export function isFrameworkControlFlowError(error: unknown): boolean {
    A webhook is an optimisation. The TTL is the guarantee.
 
    Development defaults to no caching at all, so editing Shopify and refreshing
-   the browser shows the change. Production defaults to a minute, which is short
-   enough to feel live and long enough that a burst of traffic does not walk the
-   whole catalogue once per visitor. `SHOPIFY_CACHE_SECONDS` overrides both.
+   the browser shows the change. Production defaults to 15 minutes.
+   `SHOPIFY_CACHE_SECONDS` overrides both.
+
+   It was a minute, and that was measured to be too short for the Hobby plan
+   (2026-11-04). This TTL also sets how often an ISR page may rebuild, and one
+   automated client requesting `/` every 168s rebuilt the homepage around the
+   clock with 7 real visitors a day: ~500 ISR write units an hour, or ~360K a
+   month against a 200K limit. The three `export const revalidate` values on
+   the ISR routes repeat this number, because Next needs a literal there and
+   the lower of the two wins. Move them together.
 --------------------------------------------------------------------------- */
 
 export const SHOPIFY_CACHE_SECONDS = (() => {
   const configured = Number(process.env.SHOPIFY_CACHE_SECONDS);
   if (Number.isFinite(configured) && configured >= 0) return configured;
 
-  return process.env.NODE_ENV === "production" ? 60 : 0;
+  return process.env.NODE_ENV === "production" ? 900 : 0;
 })();
 
 type ExtractVariables<T> = T extends { variables: object }
@@ -411,7 +418,7 @@ export async function getMenu(handle: string): Promise<Menu[]> {
     query: getMenuQuery,
     // On the default TTL like everything else (see SHOPIFY_CACHE_SECONDS):
     // uncached in development, so an Admin edit shows on refresh, and at most
-    // a minute behind in production. No tag - Shopify sends no webhook for
+    // 15 minutes behind in production. No tag - Shopify sends no webhook for
     // menus - so the TTL alone is what brings an edit through.
     //
     // It was `no-store`, so header edits would appear instantly. The cost was
@@ -884,8 +891,8 @@ function reshapeAddOn(node: ShopifyAddOnMetaobject): ProductAddOn | undefined {
  * Every add-on the storefront should offer, in the merchant's order.
  *
  * Memoised per request - the product page and the add-to-cart action can both
- * ask - and on the standard TTL, so a price edit in Admin is live within a
- * minute in production. Degrades to `[]`: a store with no definition, or with
+ * ask - and on the standard TTL, so a price edit in Admin is live within 15
+ * minutes in production. Degrades to `[]`: a store with no definition, or with
  * Storefronts access switched off, just sells without add-ons.
  */
 export const getAddOns = reactCache(async (): Promise<ProductAddOn[]> => {
@@ -1165,8 +1172,8 @@ function reshapeKitColour(
  * than a kit needs, or no fabric to pick variants by.
  *
  * Memoised per request - the page and `addKitItem` both read it - on the
- * standard TTL, so a price or a new thread colour is live within a minute in
- * production. Degrades to `null` (the page then says it is resting).
+ * standard TTL, so a price or a new thread colour is live within 15 minutes
+ * in production. Degrades to `null` (the page then says it is resting).
  */
 export const getKitBuilder = reactCache(async (): Promise<KitBuilder | null> => {
   try {

@@ -24,11 +24,11 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 // On-demand ISR: each product renders on its first visit and is then served
-// from the CDN, refreshed at most once a minute (the Shopify fetch TTL). This
+// from the CDN, refreshed at most every 15 minutes (the Shopify fetch TTL). This
 // only holds while nothing in the tree reads cookies, headers or
 // searchParams - the cart is fetched by the browser for exactly that reason
 // (see CartProvider). An empty list is what enables runtime ISR.
-export const revalidate = 60;
+export const revalidate = 900;
 export function generateStaticParams() {
   return [];
 }

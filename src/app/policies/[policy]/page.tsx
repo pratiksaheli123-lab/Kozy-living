@@ -8,7 +8,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 // On-demand ISR - see the note in `app/[page]/page.tsx`.
-export const revalidate = 60;
+export const revalidate = 900;
 export function generateStaticParams() {
   return [];
 }
