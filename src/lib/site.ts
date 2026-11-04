@@ -54,7 +54,7 @@ export const site = {
   name: "Kozy Living",
   wordmark: "KOZY",
   wordmarkAccent: "LIVING",
-  tagline: "Reimagined Indian Kraft to Give You Moments of Rest",
+  tagline: "Reimagined Indian Kraft for Everyday",
   /** The brand's own closing line. Used wherever one sentence has to carry it. */
   statement:
     "You don't need to add more to your day. Just do what you do with more intention.",
@@ -189,7 +189,7 @@ export const founderReel = [
  */
 
 /** The quiet line above the header. */
-export const announcement = "Reimagined Indian kraft to give you moments of rest";
+export const announcement = "Reimagined Indian kraft for everyday";
 
 /* ------------------------------------------------------------------ homepage
    The sections below map one-to-one onto the homepage layout, in page order.
